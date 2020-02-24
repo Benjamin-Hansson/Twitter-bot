@@ -15,13 +15,11 @@ last_id = ""
 while (True):
 	a = api.user_timeline(screen_name="realdonaldtrump", tweet_mode='extended')
 
-	if a:
-		for i in range(len(a)):
-
+	if a and a[0].id_str != last_id:
 			translator = Translator()
 
-			tweet = a[i].full_text
-
+			tweet = a[0].full_text
+			print("---------------------------")
 			print("Tweet:", tweet)
 
 			# & seems to crash the translator
@@ -35,19 +33,23 @@ while (True):
 				tweet = tweet[:index]
 				print(index)
 
+			if not tweet:
+				continue
 			# Translate 30 times (100 takes to long time and there is a limit on number of requests to the api)
 			# Idea still the same though
 			lang1, lang2 = "en", ""
-			"""
+
 			for i in range(30):
 				lang2 = random.choice(list(LANGUAGES.items()))[0] # choose a random language
 				tweet = translator.translate(text=tweet, src=lang1, dest=lang2).text
 				lang1 = lang2
+
 			tweet = translator.translate(text=tweet, src=lang1, dest='en').text # translate back to english
 			tweet = tweet + " " + url # add back the url
 			print("new: " + tweet)
 
-			"""
-	# api.update_status(status="@realdonaldtrump " + tweet, in_reply_to_status_id=a[0].id_str)
+			api.update_status(status="@realdonaldtrump " + tweet, in_reply_to_status_id=a[0].id_str)
+			last_id = a[0].id_str
+			sleep(100)
 	# print("--------------------------")
 
